@@ -46,7 +46,7 @@ describe('create handler', () => {
 
         expect(result.statusCode).toBe(201);
         const expectedLocation = {
-            id: validCoordinates.id,
+            locationId: validCoordinates.id,
             name: validBody.name,
             city: validBody.city,
             state: validBody.state,

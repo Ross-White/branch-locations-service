@@ -1,27 +1,20 @@
 import { BranchLocation, Coordinates, LocationInput } from "@shared/types";
 import { getCoordinates } from "@shared/coordinates";
 import { dynamoDb } from "@shared/db";
+import { validateLocationInput, formatValidationErrors } from "@shared/validation";
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import z from "zod";
-
-const locationSchema = z.object({
-  name: z.string().max(50),
-  city: z.string().max(50),
-  state: z.string().max(50),
-  country: z.string().max(50),
-});
 
 const db = new dynamoDb();
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     const body: LocationInput | null = event.body ? JSON.parse(event.body) : null;
-    const validationResult = locationSchema.safeParse(body);
+    const validationResult = validateLocationInput(body);
 
     if (!validationResult.success) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ message: "Invalid request body", errors: z.treeifyError(validationResult.error) }),
+            body: JSON.stringify({ message: "Invalid request body", errors: formatValidationErrors(validationResult.error) }),
         };
     }
 
@@ -47,7 +40,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const { latitude, longitude, id } = coordinates;
 
     const location: BranchLocation = {
-        id: id,
+        locationId: id,
         name: name,
         city: city,
         state: state,

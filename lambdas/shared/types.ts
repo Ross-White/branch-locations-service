@@ -1,5 +1,5 @@
 export interface BranchLocation {
-  id: number;
+  locationId: number;
   name: string;
   city: string;
   state: string;
