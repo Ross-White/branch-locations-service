@@ -1,11 +1,9 @@
 export interface BranchLocation {
-  id: string;
+  id: number;
   name: string;
-  address: string;
   city: string;
   state: string;
-  zipCode: string;
-  phoneNumber: string;
+	country: string;
   latitude: number;
   longitude: number;
 }
@@ -20,4 +18,5 @@ export interface LocationInput {
 export interface Coordinates {
 	latitude: number;
 	longitude: number;
+	id: number;
 }

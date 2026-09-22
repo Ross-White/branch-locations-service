@@ -2,18 +2,21 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { BranchLocation } from "./types";
 
-const client = new DynamoDBClient({});
-const ddb = DynamoDBDocumentClient.from(client);
 
-export class db {
-  private tableName: string;
 
-  constructor(tableName: string) {
-    this.tableName = tableName;
+export class dynamoDb {
+    private client: DynamoDBClient;
+    private tableName: string;
+    private ddb: DynamoDBDocumentClient;
+
+  constructor() {
+    this.tableName = process.env.TABLE_NAME || 'BranchLocations';
+    this.client = new DynamoDBClient({});
+    this.ddb = DynamoDBDocumentClient.from(this.client);
   }
 
   async get(locationId: string): Promise<BranchLocation | null> {
-    const result = await ddb.send(
+    const result = await this.ddb.send(
         new GetCommand({
             TableName: this.tableName,
             Key: { LocationId: locationId },
@@ -23,7 +26,7 @@ export class db {
   }
 
   async put(location: BranchLocation): Promise<void> {
-    await ddb.send(
+    await this.ddb.send(
         new PutCommand({
             TableName: this.tableName,
             Item: location,
@@ -32,7 +35,7 @@ export class db {
   }
 
   async list(): Promise<BranchLocation[]> {
-    const result = await ddb.send(
+    const result = await this.ddb.send(
         new ScanCommand({
             TableName: this.tableName,
         })

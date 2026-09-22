@@ -27,6 +27,7 @@ export async function getCoordinates(city: string, state: string, country: strin
 
     return {
         latitude: parseFloat(data[0].lat),
-        longitude: parseFloat(data[0].lon)
+        longitude: parseFloat(data[0].lon),
+        id: data[0].osm_id
     };
 }
