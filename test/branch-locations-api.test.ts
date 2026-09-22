@@ -1,17 +1,16 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as BranchLocationsApi from '../lib/branch-locations-api-stack';
+import * as cdk from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import * as BranchLocationsApi from '../lib/branch-locations-api-stack';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/branch-locations-api-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new BranchLocationsApi.BranchLocationsApiStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+describe('BranchLocationsApiStack', () => {
+	const app = new cdk.App();
+	const stack = new BranchLocationsApi.BranchLocationsApiStack(app, 'BranchLocationsApiStack');
+	const template = Template.fromStack(stack);
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+  it('should create a DynamoDB table with LocationId as the partition key', () => {
+		template.hasResourceProperties('AWS::DynamoDB::Table', {
+			"KeySchema": [{ "AttributeName": "LocationId", "KeyType": "HASH" }],
+			"BillingMode": "PAY_PER_REQUEST",
+		});
+	});
 });
