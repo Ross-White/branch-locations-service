@@ -22,7 +22,14 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "paths": {
+      "@shared/*": ["./lambdas/shared/*"]
+    }
   },
   "exclude": [
     "node_modules",
