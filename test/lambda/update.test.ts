@@ -96,7 +96,7 @@ describe('update handler', () => {
     });
 
     it('returns 400 when the request body fails validation', async () => {
-        const invalidBody = { name: 'Dallas Branch', city: 'Dallas', state: 'Texas' }; // missing country
+        const invalidBody = { name: 'Dallas Branch', city: 'Dallas', state: 'Texas' };
 
         const result = await handler(buildEvent(validId, invalidBody));
 
