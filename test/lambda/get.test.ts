@@ -21,7 +21,7 @@ function buildEvent(id?: string): APIGatewayProxyEvent {
 const validId = '1234567';
 
 const existingLocation: BranchLocation = {
-    locationId: 1234567,
+    locationId: '1234567',
     name: 'Dallas Branch',
     city: 'Dallas',
     state: 'Texas',
@@ -74,11 +74,8 @@ describe('get handler', () => {
     });
 
     it.each([
-        ['too short', '123456'],
-        ['too long', '12345678'],
-        ['non-numeric', 'abcdefg'],
-        ['contains non-digit characters', '123456a'],
-        ['negative number', '-123456'],
+        ['too short', '12345'],
+        ['too long', '1234567890123'],
     ])('returns 400 when the id is invalid', async (_description, id) => {
         const result = await handler(buildEvent(id));
 

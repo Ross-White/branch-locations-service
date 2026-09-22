@@ -9,8 +9,7 @@ describe('getCoordinates', () => {
         const result = await getCoordinates('Dallas', 'Texas', 'USA');
         expect(result).toEqual({
             latitude: 32.7762719,
-            longitude: -96.7968559,
-            id: expect.any(Number)
+            longitude: -96.7968559
         });
     });
 

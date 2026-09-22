@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { getCoordinates } from '@shared/coordinates';
 import { dynamoDb } from '@shared/db';
-import { Coordinates, LocationInput } from '@shared/types';
+import { Coordinates, CreateLocationInput } from '@shared/types';
 
 jest.mock('@shared/coordinates');
 jest.mock('@shared/db');
@@ -21,7 +21,8 @@ function buildEvent(body: unknown): APIGatewayProxyEvent {
     } as unknown as APIGatewayProxyEvent;
 }
 
-const validBody: LocationInput = {
+const validBody: CreateLocationInput = {
+    locationId: '1234567',
     name: 'Dallas Branch',
     city: 'Dallas',
     state: 'Texas',
@@ -31,7 +32,6 @@ const validBody: LocationInput = {
 const validCoordinates: Coordinates = {
     latitude: 32.7762719,
     longitude: -96.7968559,
-    id: 123456,
 };
 
 describe('create handler', () => {
@@ -46,7 +46,7 @@ describe('create handler', () => {
 
         expect(result.statusCode).toBe(201);
         const expectedLocation = {
-            locationId: validCoordinates.id,
+            locationId: validBody.locationId,
             name: validBody.name,
             city: validBody.city,
             state: validBody.state,
@@ -62,7 +62,7 @@ describe('create handler', () => {
     });
 
     it('returns 400 and does not call coordinates/db when the body fails validation', async () => {
-        const invalidBody = { name: 'Dallas Branch', city: 'Dallas', state: 'Texas' };
+        const invalidBody = { locationId: validBody.locationId, name: 'Dallas Branch', city: 'Dallas', state: 'Texas' };
 
         const result = await handler(buildEvent(invalidBody));
 
@@ -87,6 +87,24 @@ describe('create handler', () => {
 
     it('returns 400 when no request body is provided', async () => {
         const result = await handler(buildEvent(undefined));
+
+        expect(result.statusCode).toBe(400);
+        const parsed = JSON.parse(result.body);
+        expect(parsed.message).toBe('Invalid request body');
+
+        expect(mockedGetCoordinates).not.toHaveBeenCalled();
+        expect(mockedPut).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['missing', undefined],
+        ['too short', '12345'],
+        ['too long', '1234567890123'],
+        ['not a string', 1234567],
+    ])('returns 400 when locationId is invalid', async (_description, locationId) => {
+        const invalidBody = { ...validBody, locationId };
+
+        const result = await handler(buildEvent(invalidBody));
 
         expect(result.statusCode).toBe(400);
         const parsed = JSON.parse(result.body);

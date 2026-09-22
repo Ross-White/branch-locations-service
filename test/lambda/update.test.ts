@@ -28,7 +28,7 @@ function buildEvent(id: string | undefined, body: unknown): APIGatewayProxyEvent
 const validId = '1234567';
 
 const existingLocation: BranchLocation = {
-    locationId: 1234567,
+    locationId: '1234567',
     name: 'Dallas Branch',
     city: 'Dallas',
     state: 'Texas',
@@ -47,7 +47,6 @@ const updateBody = {
 const newCoordinates: Coordinates = {
     latitude: 32.7554883,
     longitude: -97.3307658,
-    id: 987654,
 };
 
 describe('update handler', () => {
@@ -82,11 +81,9 @@ describe('update handler', () => {
 
     it.each([
         ['missing', undefined],
-        ['too short', '123456'],
-        ['too long', '12345678'],
-        ['non-numeric', 'abcdefg'],
-        ['negative', '-123456'],
-    ])('returns 400 when the locationId is %s (%s)', async (_description, id) => {
+        ['too short', '12345'],
+        ['too long', '1234567890123'],
+    ])('returns 400 when the locationId is invalid', async (_description, id) => {
         const result = await handler(buildEvent(id, updateBody));
 
         expect(result.statusCode).toBe(400);

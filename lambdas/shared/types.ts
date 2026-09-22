@@ -1,5 +1,5 @@
 export interface BranchLocation {
-  locationId: number;
+  locationId: string;
   name: string;
   city: string;
   state: string;
@@ -15,8 +15,11 @@ export interface LocationInput {
 	country: string;
 }
 
+export interface CreateLocationInput extends LocationInput {
+	locationId: string;
+}
+
 export interface Coordinates {
 	latitude: number;
 	longitude: number;
-	id: number;
 }

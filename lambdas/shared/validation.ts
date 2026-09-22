@@ -9,10 +9,19 @@ export const locationInputSchema = z.object({
 
 export const locationIdSchema = z
     .string()
-    .regex(/^\d{7}$/, "locationId must be a 7-digit number");
+    .min(6, "locationId must be between 6 and 12 characters")
+    .max(12, "locationId must be between 6 and 12 characters");
+
+export const createLocationInputSchema = locationInputSchema.extend({
+    locationId: locationIdSchema,
+});
 
 export function validateLocationInput(body: unknown) {
     return locationInputSchema.safeParse(body);
+}
+
+export function validateCreateLocationInput(body: unknown) {
+    return createLocationInputSchema.safeParse(body);
 }
 
 export function validateLocationId(id: unknown) {

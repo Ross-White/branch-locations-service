@@ -1,15 +1,15 @@
-import { BranchLocation, Coordinates, LocationInput } from "@shared/types";
+import { BranchLocation, Coordinates, CreateLocationInput } from "@shared/types";
 import { getCoordinates } from "@shared/coordinates";
 import { dynamoDb } from "@shared/db";
-import { validateLocationInput, formatValidationErrors } from "@shared/validation";
+import { validateCreateLocationInput, formatValidationErrors } from "@shared/validation";
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 const db = new dynamoDb();
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-    const body: LocationInput | null = event.body ? JSON.parse(event.body) : null;
-    const validationResult = validateLocationInput(body);
+    const body: CreateLocationInput | null = event.body ? JSON.parse(event.body) : null;
+    const validationResult = validateCreateLocationInput(body);
 
     if (!validationResult.success) {
         return {
@@ -18,7 +18,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
     }
 
-    const { name, city, state, country } = validationResult.data;
+    const { locationId, name, city, state, country } = validationResult.data;
 
     let coordinates: Coordinates | null;
     try {
@@ -37,10 +37,10 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
     }
 
-    const { latitude, longitude, id } = coordinates;
+    const { latitude, longitude } = coordinates;
 
     const location: BranchLocation = {
-        locationId: id,
+        locationId: locationId,
         name: name,
         city: city,
         state: state,
