@@ -20,6 +20,23 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     const { locationId, name, city, state, country } = validationResult.data;
 
+    let existingLocation: BranchLocation | null;
+    try {
+        existingLocation = await db.get(locationId);
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Error occurred while checking for an existing location" }),
+        };
+    }
+
+    if (existingLocation) {
+        return {
+            statusCode: 409,
+            body: JSON.stringify({ message: `A location already exists with id: ${locationId}` }),
+        };
+    }
+
     let coordinates: Coordinates | null;
     try {
         coordinates = await getCoordinates(city, state, country);

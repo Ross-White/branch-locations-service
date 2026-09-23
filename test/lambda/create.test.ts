@@ -11,6 +11,9 @@ import { handler } from '../../lambdas/create';
 const mockedGetCoordinates = getCoordinates as jest.MockedFunction<typeof getCoordinates>;
 const MockedDynamoDb = dynamoDb as jest.MockedClass<typeof dynamoDb>;
 
+const mockedGet = MockedDynamoDb.mock.instances[0].get as jest.MockedFunction<
+    InstanceType<typeof dynamoDb>['get']
+>;
 const mockedPut = MockedDynamoDb.mock.instances[0].put as jest.MockedFunction<
     InstanceType<typeof dynamoDb>['put']
 >;
@@ -35,6 +38,10 @@ const validCoordinates: Coordinates = {
 };
 
 describe('create handler', () => {
+    beforeEach(() => {
+        mockedGet.mockResolvedValue(null);
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -56,9 +63,44 @@ describe('create handler', () => {
         };
         expect(JSON.parse(result.body)).toEqual(expectedLocation);
 
+        expect(mockedGet).toHaveBeenCalledWith(validBody.locationId);
         expect(mockedGetCoordinates).toHaveBeenCalledWith(validBody.city, validBody.state, validBody.country);
         expect(mockedPut).toHaveBeenCalledTimes(1);
         expect(mockedPut).toHaveBeenCalledWith(expectedLocation);
+    });
+
+    it('returns 409 when a location already exists for the given locationId', async () => {
+        mockedGet.mockResolvedValue({
+            locationId: validBody.locationId,
+            name: 'Existing Branch',
+            city: 'Somewhere',
+            state: 'Somewhere',
+            country: 'USA',
+            latitude: 0,
+            longitude: 0,
+        });
+
+        const result = await handler(buildEvent(validBody));
+
+        expect(result.statusCode).toBe(409);
+        expect(JSON.parse(result.body)).toEqual({
+            message: `A location already exists with id: ${validBody.locationId}`,
+        });
+
+        expect(mockedGetCoordinates).not.toHaveBeenCalled();
+        expect(mockedPut).not.toHaveBeenCalled();
+    });
+
+    it('returns 500 when checking for an existing location throws', async () => {
+        mockedGet.mockRejectedValue(new Error('ddb unavailable'));
+
+        const result = await handler(buildEvent(validBody));
+
+        expect(result.statusCode).toBe(500);
+        expect(JSON.parse(result.body)).toEqual({ message: 'Error occurred while checking for an existing location' });
+
+        expect(mockedGetCoordinates).not.toHaveBeenCalled();
+        expect(mockedPut).not.toHaveBeenCalled();
     });
 
     it('returns 400 and does not call coordinates/db when the body fails validation', async () => {
