@@ -4,7 +4,9 @@ const NOMINATIM_API_URL = 'https://nominatim.openstreetmap.org/search';
 
 export async function getCoordinates(city: string, state: string, country: string): Promise<Coordinates | null> {
     const url = new URL(NOMINATIM_API_URL);
-    url.searchParams.set('q', `${city}, ${state}, ${country}`);
+    url.searchParams.set('city', city);
+    url.searchParams.set('state', state);
+    url.searchParams.set('country', country);
     url.searchParams.set('format', 'json');
 
     const response = await fetch(url.toString(), {
