@@ -5,7 +5,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 const db = new dynamoDb();
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-    const validationResult = validateLocationId(event.pathParameters?.id);
+    const validationResult = validateLocationId(event.pathParameters?.locationId);
 
     if (!validationResult.success) {
         return {

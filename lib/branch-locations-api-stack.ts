@@ -44,7 +44,7 @@ export class BranchLocationsApiStack extends cdk.Stack {
 
     table.grantReadData(listLambda);
     table.grantReadData(getLambda);
-    table.grantWriteData(createLambda);
+    table.grantReadWriteData(createLambda);
     table.grantReadWriteData(updateLambda);
 
     const api = new apigateway.RestApi(this, 'BranchLocationsApi', {

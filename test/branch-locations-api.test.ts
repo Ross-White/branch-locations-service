@@ -40,18 +40,13 @@ describe('BranchLocationsApiStack', () => {
     }
   });
 
-  it('grants write-only access to the create Lambda', () => {
-    const actions = policyActionsFor('CreateLocationLambda');
+  it('grants read and write access to the create and update Lambdas', () => {
+    for (const lambdaConstructId of ['CreateLocationLambda', 'UpdateLocationLambda']) {
+      const actions = policyActionsFor(lambdaConstructId);
 
-    expect(actions).toContain('dynamodb:PutItem');
-    expect(actions).not.toContain('dynamodb:GetItem');
-  });
-
-  it('grants read and write access to the update Lambda', () => {
-    const actions = policyActionsFor('UpdateLocationLambda');
-
-    expect(actions).toContain('dynamodb:GetItem');
-    expect(actions).toContain('dynamodb:PutItem');
+      expect(actions).toContain('dynamodb:GetItem');
+      expect(actions).toContain('dynamodb:PutItem');
+    }
   });
 
   it('should create a REST API named "Branch Locations Service"', () => {

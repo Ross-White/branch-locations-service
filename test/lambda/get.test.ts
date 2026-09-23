@@ -12,9 +12,9 @@ const mockedGet = MockedDynamoDb.prototype.get as jest.MockedFunction<
     InstanceType<typeof dynamoDb>['get']
 >;
 
-function buildEvent(id?: string): APIGatewayProxyEvent {
+function buildEvent(locationId?: string): APIGatewayProxyEvent {
     return {
-        pathParameters: id === undefined ? null : { id },
+        pathParameters: locationId === undefined ? null : { locationId },
     } as unknown as APIGatewayProxyEvent;
 }
 

@@ -18,9 +18,9 @@ const mockedPut = MockedDynamoDb.prototype.put as jest.MockedFunction<
 >;
 const mockedGetCoordinates = getCoordinates as jest.MockedFunction<typeof getCoordinates>;
 
-function buildEvent(id: string | undefined, body: unknown): APIGatewayProxyEvent {
+function buildEvent(locationId: string | undefined, body: unknown): APIGatewayProxyEvent {
     return {
-        pathParameters: id === undefined ? null : { id },
+        pathParameters: locationId === undefined ? null : { locationId },
         body: body === undefined ? null : JSON.stringify(body),
     } as unknown as APIGatewayProxyEvent;
 }
@@ -182,7 +182,7 @@ describe('update handler', () => {
 
     it('rejects when the request body is not valid JSON', async () => {
         const event = {
-            pathParameters: { id: validId },
+            pathParameters: { locationId: validId },
             body: '{not valid json',
         } as unknown as APIGatewayProxyEvent;
 
