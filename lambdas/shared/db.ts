@@ -2,8 +2,6 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { BranchLocation } from "./types";
 
-
-
 export class dynamoDb {
     private client: DynamoDBClient;
     private tableName: string;
@@ -19,10 +17,10 @@ export class dynamoDb {
     const result = await this.ddb.send(
         new GetCommand({
             TableName: this.tableName,
-            Key: { LocationId: locationId },
+            Key: { locationId },
         })
     )
-    return result.Item as BranchLocation | null;
+    return (result.Item as BranchLocation | undefined) ?? null;
   }
 
   async put(location: BranchLocation): Promise<void> {
@@ -40,6 +38,6 @@ export class dynamoDb {
             TableName: this.tableName,
         })
     );
-    return result.Items as BranchLocation[];
+    return (result.Items ?? []) as BranchLocation[];
   }
 }

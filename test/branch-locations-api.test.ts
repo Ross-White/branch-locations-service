@@ -7,9 +7,9 @@ describe('BranchLocationsApiStack', () => {
 	const stack = new BranchLocationsApi.BranchLocationsApiStack(app, 'BranchLocationsApiStack');
 	const template = Template.fromStack(stack);
 
-  it('should create a DynamoDB table with LocationId as the partition key', () => {
+  it('should create a DynamoDB table with locationId as the partition key', () => {
 		template.hasResourceProperties('AWS::DynamoDB::Table', {
-			"KeySchema": [{ "AttributeName": "LocationId", "KeyType": "HASH" }],
+			"KeySchema": [{ "AttributeName": "locationId", "KeyType": "HASH" }],
 			"BillingMode": "PAY_PER_REQUEST",
 		});
 	});

@@ -6,7 +6,7 @@ A serverless REST API for storing and querying branch locations, built with AWS 
 
 - **API Gateway** (`Branch Locations Service`) — REST API, proxying each route to its own Lambda.
 - **Lambda** (Node.js 22.x, one function per operation) — `list`, `get`, `create`, `update`, each with least-privilege DynamoDB IAM grants.
-- **DynamoDB** (`BranchLocations`) — single table, partition key `LocationId` (string), on-demand billing.
+- **DynamoDB** (`BranchLocations`) — single table, partition key `locationId` (string), on-demand billing.
 - **Zod** — request validation (`lambdas/shared/validation.ts`), shared across handlers.
 
 ## API

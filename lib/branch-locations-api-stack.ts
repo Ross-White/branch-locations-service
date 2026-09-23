@@ -12,7 +12,7 @@ export class BranchLocationsApiStack extends cdk.Stack {
     const tableName = 'BranchLocations';
     const table = new dynamodb.Table(this, tableName, {
       tableName,
-      partitionKey: { name: 'LocationId', type: dynamodb.AttributeType.STRING },
+      partitionKey: { name: 'locationId', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
 
