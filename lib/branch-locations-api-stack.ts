@@ -9,9 +9,7 @@ export class BranchLocationsApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const tableName = 'BranchLocations';
-    const table = new dynamodb.Table(this, tableName, {
-      tableName,
+    const table = new dynamodb.Table(this, 'BranchLocations', {
       partitionKey: { name: 'locationId', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
@@ -21,7 +19,7 @@ export class BranchLocationsApiStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       timeout: cdk.Duration.seconds(10),
       environment: {
-        TABLE_NAME: tableName,
+        TABLE_NAME: table.tableName,
       },
     };
 

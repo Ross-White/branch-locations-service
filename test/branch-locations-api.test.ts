@@ -15,13 +15,14 @@ describe('BranchLocationsApiStack', () => {
 	});
 
   it('should create four Lambda functions with the shared runtime, timeout, and TABLE_NAME environment variable', () => {
+    const [tableLogicalId] = Object.keys(template.findResources('AWS::DynamoDB::Table'));
     const functions = Object.values(template.findResources('AWS::Lambda::Function'));
 
     expect(functions).toHaveLength(4);
     for (const fn of functions) {
       expect(fn.Properties.Runtime).toBe('nodejs22.x');
       expect(fn.Properties.Timeout).toBe(10);
-      expect(fn.Properties.Environment.Variables.TABLE_NAME).toBe('BranchLocations');
+      expect(fn.Properties.Environment.Variables.TABLE_NAME).toEqual({ Ref: tableLogicalId });
     }
   });
 
